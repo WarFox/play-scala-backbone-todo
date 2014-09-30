@@ -15,7 +15,7 @@ object Global extends GlobalSettings {
         println(s)
         if (Todos.count == 0) {
           Seq(
-            Todo(None, "Hello todos.")
+            Todo(None, "Hello todos.", "my email")
           ).foreach(Todos.create)
         }
       }

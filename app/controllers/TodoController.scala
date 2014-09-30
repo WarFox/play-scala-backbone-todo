@@ -15,7 +15,8 @@ object TodoController extends Controller {
   val todoForm = Form(
     mapping(
       "id" -> optional(longNumber),
-      "content" -> nonEmptyText
+      "content" -> nonEmptyText,
+      "email" -> email
     )(Todo.apply)(Todo.unapply)
   )
 
@@ -29,7 +30,7 @@ object TodoController extends Controller {
 
   def createTodo = DBAction(parse.json) { implicit rs =>
     rs.body.validate[Todo].map {
-      case (todo) => Ok(Json.toJson(Todos.findById(Todos.create(Todo(None, todo.content.trim)))))
+      case (todo) => Ok(Json.toJson(Todos.findById(Todos.create(Todo(None, todo.content.trim, todo.email.trim)))))
     }.recoverTotal {
       e => BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toFlatJson(e)))
     }
@@ -37,7 +38,7 @@ object TodoController extends Controller {
 
   def updateTodo(id: Long) = DBAction(parse.json) { implicit rs =>
     rs.body.validate[Todo].map {
-      case (todo) => Ok(Json.toJson(Todos.update(id, Todo(todo.id, todo.content.trim))))
+      case (todo) => Ok(Json.toJson(Todos.update(id, Todo(todo.id, todo.content.trim, todo.email.trim))))
     }.recoverTotal {
       e => BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toFlatJson(e)))
     }

@@ -9,7 +9,7 @@ private[models] trait DAO extends TodosComponent {
   val Todos = new Todos
 }
 
-case class Todo(id: Option[Long] = None, content: String)
+case class Todo(id: Option[Long] = None, content: String, email: String)
 
 object Todo {
   implicit val todoFmt = Json.format[Todo]
@@ -21,7 +21,8 @@ trait TodosComponent {
   class Todos extends Table[Todo]("TODO") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def content = column[String]("content", O.DBType("TEXT"))
-    def * = id.? ~ content <>(Todo.apply _, Todo.unapply _)
+    def email = column[String]("email", O.DBType("TEXT"))
+    def * = id.? ~ content ~ email <>(Todo.apply _, Todo.unapply _)
     def autoInc = * returning id
     val byId = createFinderBy(_.id)
   }
